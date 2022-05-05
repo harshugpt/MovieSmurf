@@ -1,25 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from 'react';
+import Moviecard from './MovieCard';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import './App.css';
+//import SeachIcon from './Search.svg';
+
+const API_URL = "http://www.omdbapi.com?apikey=917c82e3";
+
+
+const App = () => {
+    const [movies, setmovies] = useState([]);
+    const [searchitem, setsearchitem] = useState('');
+    
+    const searchmovie = async(title) => {
+        const response = await fetch(`${API_URL}&s=${title}`);
+        const data = await response.json();
+
+        setmovies(data.Search);
+    }
+    useEffect(() => {
+        searchmovie('Jungle');
+    }, []);
+    return (
+        <div className="app">
+            <h1>MovieSmurf</h1>
+            <div className="search">
+                <input placeholder="Search" value={searchitem} onChange={(e) => setsearchitem(e.target.value)}></input>
+                <img src="" alt="search" onClick={() => searchmovie(searchitem)}></img>
+            </div>
+            {
+                movies?.length > 0
+                ? (
+                    <div className="display">
+                        {movies.map((movie) => (<Moviecard movie={movie} />))}
+                    </div>
+                ) : (
+                    <div className="empty">
+                        <h2>No movies found</h2>
+                    </div>
+                )
+            }
+
+            
+        </div>
+    );
 }
 
 export default App;
